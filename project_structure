@@ -1,0 +1,17 @@
+image-to-text-pipeline/
+├── config/
+│   └── config.yaml
+├── src/
+│   ├── __init__.py
+│   ├── pipeline/
+│   │   ├── __init__.py
+│   │   └── caption_pipeline.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── sdxl_wrapper.py
+│   └── utils/
+│       ├── __init__.py
+│       ├── image_processing.py
+│       └── text_processing.py
+├── requirements.txt
+└── main.py 
