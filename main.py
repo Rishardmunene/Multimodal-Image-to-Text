@@ -11,15 +11,18 @@ def load_config(config_path):
 
 def download_sample_coco(num_images=1000):
     try:
-        coco = COCO('data/annotations/captions_val2017.json')  # Changed to val2017
+        coco = COCO('data/annotations/captions_val2017.json')
         print("Successfully loaded COCO annotations")
         
         img_ids = coco.getImgIds()[:num_images]
         print(f"Processing {len(img_ids)} images")
         
+        # Create images directory if it doesn't exist
+        os.makedirs('data/images/val2017', exist_ok=True)
+        
         for img_id in img_ids:
             img_info = coco.loadImgs(img_id)[0]
-            image_path = os.path.join('data/images', img_info['file_name'])
+            image_path = os.path.join('data/images/val2017', img_info['file_name'])
             if not os.path.exists(image_path):
                 try:
                     urllib.request.urlretrieve(img_info['coco_url'], image_path)
@@ -28,6 +31,7 @@ def download_sample_coco(num_images=1000):
                     print(f"Error downloading {img_info['file_name']}: {str(e)}")
     except Exception as e:
         print(f"Error in download_sample_coco: {str(e)}")
+
 def main():
     # Load configuration
     config = load_config('config/config.yaml')
@@ -41,14 +45,11 @@ def main():
     
     # Initialize COCO API with validation set
     try:
-        coco = COCO('data/annotations/captions_val2017.json')  # Changed to val2017
+        coco = COCO('data/annotations/captions_val2017.json')
         print("Successfully loaded COCO annotations")
     except Exception as e:
         print(f"Error loading COCO annotations: {str(e)}")
         return
-    
-    # Initialize COCO API
-    coco = COCO('data/annotations/captions_train2017.json')
     
     # Get image IDs
     img_ids = coco.getImgIds()
@@ -56,7 +57,7 @@ def main():
     # Process first 10 images (for testing)
     for img_id in img_ids[:10]:
         img_info = coco.loadImgs(img_id)[0]
-        image_path = os.path.join('data/images', img_info['file_name'])
+        image_path = os.path.join('data/images/val2017', img_info['file_name'])
         
         # Get ground truth captions
         ann_ids = coco.getAnnIds(imgIds=img_id)
