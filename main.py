@@ -2,10 +2,26 @@ import yaml
 from src.pipeline.caption_pipeline import CaptionPipeline
 import os
 from pycocotools.coco import COCO
+import urllib.request
+import subprocess
 
 def load_config(config_path):
     with open(config_path, 'r') as f:
         return yaml.safe_load(f)
+
+def download_sample_coco(num_images=1000):
+    coco = COCO('data/annotations/captions_train2017.json')
+    img_ids = coco.getImgIds()[:num_images]
+    
+    for img_id in img_ids:
+        img_info = coco.loadImgs(img_id)[0]
+        image_path = os.path.join('data/images', img_info['file_name'])
+        if not os.path.exists(image_path):
+            try:
+                urllib.request.urlretrieve(img_info['coco_url'], image_path)
+                print(f"Downloaded: {img_info['file_name']}")
+            except Exception as e:
+                print(f"Error downloading {img_info['file_name']}: {str(e)}")
 
 def main():
     # Load configuration
@@ -14,6 +30,9 @@ def main():
     # Initialize pipeline
     pipeline = CaptionPipeline(config)
     pipeline.initialize()
+    
+    # Download sample images if needed
+    download_sample_coco(10)  # Start with 10 images for testing
     
     # Initialize COCO API
     coco = COCO('data/annotations/captions_train2017.json')
@@ -40,15 +59,5 @@ def main():
         generated_caption = pipeline.generate_caption(image_path)
         print(f"Generated caption: {generated_caption}\n")
 
-def download_sample_coco(num_images=1000):
-    coco = COCO('data/annotations/captions_train2017.json')
-    img_ids = coco.getImgIds()[:num_images]
-    
-    for img_id in img_ids:
-        img_info = coco.loadImgs(img_id)[0]
-        image_path = os.path.join('data/images', img_info['file_name'])
-        if not os.path.exists(image_path):
-            !wget -O {image_path} {img_info['coco_url']}
-
 if __name__ == "__main__":
-    main() 
+    main()
