@@ -39,6 +39,14 @@ def main():
     # Download sample images if needed
     download_sample_coco(10)  # Start with 10 images for testing
     
+    # Initialize COCO API with validation set
+    try:
+        coco = COCO('data/annotations/captions_val2017.json')  # Changed to val2017
+        print("Successfully loaded COCO annotations")
+    except Exception as e:
+        print(f"Error loading COCO annotations: {str(e)}")
+        return
+    
     # Initialize COCO API
     coco = COCO('data/annotations/captions_train2017.json')
     
