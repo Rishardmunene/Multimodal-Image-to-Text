@@ -10,19 +10,24 @@ def load_config(config_path):
         return yaml.safe_load(f)
 
 def download_sample_coco(num_images=1000):
-    coco = COCO('data/annotations/captions_train2017.json')
-    img_ids = coco.getImgIds()[:num_images]
-    
-    for img_id in img_ids:
-        img_info = coco.loadImgs(img_id)[0]
-        image_path = os.path.join('data/images', img_info['file_name'])
-        if not os.path.exists(image_path):
-            try:
-                urllib.request.urlretrieve(img_info['coco_url'], image_path)
-                print(f"Downloaded: {img_info['file_name']}")
-            except Exception as e:
-                print(f"Error downloading {img_info['file_name']}: {str(e)}")
-
+    try:
+        coco = COCO('data/annotations/captions_val2017.json')  # Changed to val2017
+        print("Successfully loaded COCO annotations")
+        
+        img_ids = coco.getImgIds()[:num_images]
+        print(f"Processing {len(img_ids)} images")
+        
+        for img_id in img_ids:
+            img_info = coco.loadImgs(img_id)[0]
+            image_path = os.path.join('data/images', img_info['file_name'])
+            if not os.path.exists(image_path):
+                try:
+                    urllib.request.urlretrieve(img_info['coco_url'], image_path)
+                    print(f"Downloaded: {img_info['file_name']}")
+                except Exception as e:
+                    print(f"Error downloading {img_info['file_name']}: {str(e)}")
+    except Exception as e:
+        print(f"Error in download_sample_coco: {str(e)}")
 def main():
     # Load configuration
     config = load_config('config/config.yaml')

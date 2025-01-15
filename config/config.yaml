@@ -3,10 +3,10 @@ model:
   device: "cuda"
   
 pipeline:
-  max_length: 77
+  max_length: 100
   num_inference_steps: 50
   guidance_scale: 7.5
 
 processing:
-  image_size: 1024
-  batch_size: 1 
+  image_size: 384  # BLIP's preferred size
+  batch_size: 1
